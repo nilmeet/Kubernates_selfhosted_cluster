@@ -14,13 +14,23 @@
         path: $HOME/.kube
         state: directory
         mode: 0755
+      delegate_to: localhost
 
     - name: copy admin.conf to user's kube config
-      copy:
+      fetch:
         src: /etc/kubernetes/admin.conf
-        dest: /home/ubuntu/.kube/config
-        remote_src: yes
+        dest: /home/ubuntu/.kube
         owner: ubuntu
+
+    - name: Move kube config file
+      shell: cp /home/ubuntu/.kube/master/etc/kubernetes/admin.conf /home/ubuntu/.kube/config
+      delegate_to: localhost
+
+    - name: Delete master folder
+      file:
+          path: /home/ubuntu/.kube/master
+          state: absent
+      delegate_to: localhost
 
     - name: install Pod network
       become: yes
@@ -29,3 +39,4 @@
       args:
         chdir: $HOME
         creates: pod_setup.txt
+      delegate_to: localhost

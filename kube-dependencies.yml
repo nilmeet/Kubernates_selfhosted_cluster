@@ -35,10 +35,3 @@
        systemctl restart docker
        systemctl restart kubelet
 
-   - name: install kubectl
-     apt:
-       name: kubectl
-       state: present
-       force: yes
-     run_once: true
-     delegate_to: master
